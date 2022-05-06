@@ -29,7 +29,7 @@ class ArticleController extends AbstractController
     }
 
     /**
-     * @Route("/acticles", name="article.index")
+     * @Route("/articles", name="article.index")
      * @return Response
      */
 
@@ -43,7 +43,7 @@ class ArticleController extends AbstractController
     }
 
     /**
-     * @Route("/acticles/{slug}-{id}", name="article.show", requirements={"slug": "[a-z0-9\-]*"})
+     * @Route("/articles/{slug}-{id}", name="article.show", requirements={"slug": "[a-z0-9\-]*"})
      * @return Response
     */
 

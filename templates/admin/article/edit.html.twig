@@ -1,0 +1,17 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Edit Articles{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <h1>Edit this article</h1>
+        {{ form_start(form) }} 
+        <div class="row">
+            <div class="col-md-6">{{ form_row(form.title) }}</div>
+        </div>
+            {{ form_widget(form) }}
+            <button class="btn btn-primary m-4">Commit Changes</button>
+        {{ form_end(form) }}
+    </div>        
+            
+{% endblock %}
