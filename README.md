@@ -11,3 +11,4 @@ Project is to create a blog-type website with symfony to discover the framework
     - Main page with articles
     - Only admin can post
     - All users can comment and like
+
