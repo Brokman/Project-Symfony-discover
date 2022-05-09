@@ -10,6 +10,18 @@
                 <a href="{{ path('admin.article.new') }}" class="btn btn-primary">Create New</a>
             </div>
         </div>
+
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success">
+                {{ message }}
+            </div>
+        {% endfor %}
+        {% for message in app.flashes('failed') %}
+            <div class="alert alert-danger">
+                {{ message }}
+            </div>
+        {% endfor %}
+
         <table class="table table-striped">
             <thead>
                 <tr>
@@ -21,10 +33,21 @@
             <tbody>
                 {% for article in articles %}
                     <tr>
-                        <td> {{ article.title }} </td>
+                        <td> {{ article.title }}</td>
                         <td> {{article.description | u.truncate(45, '...')}} </td>
                         <td>
-                            <a href="{{ path('admin.article.edit', {id: article.id}) }}" class="btn btn-secondary">Edit</a>
+                            <div class="row justify-content-arround">
+                                <div class="col-4">
+                                    <a href="{{ path('admin.article.edit', {id: article.id}) }}" class="btn btn-secondary">Edit</a>
+                                </div>
+                                <div class="col-4">
+                                    <form action="{{path('admin.article.edit', {id: article.id}) }}" method="POST" onsubmit="return confirm('Deleting this ?')">
+                                        <input type="hidden" name="_method" value="DELETE">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ article.id) }}">
+                                        <button class="btn btn-outline-danger">Delete</button>
+                                    </form>
+                                </div>
+                            </div>
                         </td>
                     </tr>        
                 {% endfor %}

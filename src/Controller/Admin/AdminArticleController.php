@@ -6,6 +6,7 @@ use App\Form\ArticleType;
 use App\Repository\ArticleRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -51,6 +52,7 @@ class AdminArticleController extends AbstractController
         if($form->isSubmitted() && $form->isValid()){
             $this->em->persist($article);
             $this->em->flush();
+            $this->addFlash('success', "Creation saved!");
             return $this->redirectToRoute('admin.article.index');
         }
 
@@ -62,7 +64,7 @@ class AdminArticleController extends AbstractController
 
 
     /**
-     * @Route("/admin/article/edit/{id}", name="admin.article.edit") 
+     * @Route("/admin/article/edit/{id}", name="admin.article.edit", methods="GET|POST") 
      * @param Request $request
      * @return \Symfony\Component\HttpFoundation\Response
      */
@@ -74,6 +76,7 @@ class AdminArticleController extends AbstractController
 
         if($form->isSubmitted() && $form->isValid()){
             $this->em->flush();
+            $this->addFlash('success', "Edition saved!");
             return $this->redirectToRoute('admin.article.index');
         }
 
@@ -81,5 +84,23 @@ class AdminArticleController extends AbstractController
             'article' => $article,
             'form' => $form->createView()
         ]);
+    }
+
+    /**
+     * @Route("/admin/article/edit/{id}", name="admin.article.delete", methods="DELETE") 
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function delete(int $id, Request $request)
+    {
+        if ($this->isCsrfTokenValid('delete' . $id, $request->get('_token'))) {
+            $article = $this->repository->find($id);
+            $this->em->remove($article);
+            $this->em->flush();
+            $this->addFlash('success', "Deletion validated!");
+        } else {
+            $this->addFlash('failed', "Deletion failed! Your CSRF token isn't valide");
+        }
+        return $this->redirectToRoute('admin.article.index');
     }
 }
