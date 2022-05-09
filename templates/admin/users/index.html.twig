@@ -1,0 +1,71 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Administrate Users{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <div class="row justify-content-between">
+            <div class="col-8"><h1>Administrate the site users</h1></div>
+        </div>
+
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success">
+                {{ message }}
+            </div>
+        {% endfor %}
+        {% for message in app.flashes('failed') %}
+            <div class="alert alert-danger">
+                {{ message }}
+            </div>
+        {% endfor %}
+
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Role</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                    <tr>
+                        <td> {{ user.username }}</td>
+                        <td>
+                            {% if user.isAdmin %}
+                                <div class="col-6">
+                                    <p class="alert-danger text-center">Admin</p>
+                                </div>
+                            {% else %}
+                                <div class="col-6">
+                                    <p class="alert-success text-center">User</p>
+                                </div>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="row justify-content-arround">
+                                <div class="col-4">
+                                    <form action="{{path('admin.users.admintoggle', {id: user.id}) }}" method="POST" onsubmit="return confirm('Toggling user role ?')">
+                                        <input type="hidden" name="_method" value="TOGGLE">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ user.id) }}">
+                                        <button class="btn btn-outline-warning" {% if user.isProtected %}disabled{% endif %}>Toggle Role</button>
+                                    </form>
+                                </div>
+                                <div class="col-4">
+                                    <form action="{{path('admin.users.delete', {id: user.id}) }}" method="POST" onsubmit="return confirm('Deleting this ?')">
+                                        <input type="hidden" name="_method" value="DELETE">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ user.id) }}">
+                                        <button class="btn btn-outline-danger" {% if user.isProtected %}disabled{% endif %}>Delete</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>        
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>        
+            
+
+
+{% endblock %}

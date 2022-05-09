@@ -5,7 +5,6 @@ namespace App\Controller;
 use App\Entity\Article;
 use App\Repository\ArticleRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\Persistence\ObjectManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -14,7 +13,7 @@ class ArticleController extends AbstractController
 {
 
     /**
-     * @var ObjectManager
+     * @var EntityManagerInterface
      */
     private $em;
     /**
@@ -29,19 +28,21 @@ class ArticleController extends AbstractController
     }
 
     /**
-     * @Route("/acticles", name="article.index")
+     * @Route("/articles", name="article.index")
      * @return Response
      */
 
     public function index(): Response
     {
+        $article = $this->repository->findAllVisible();
         return $this->render('article/index.html.twig', [
-            'current_menu' => 'articles'
+            'current_menu' => 'articles',
+            'articles' => $article
         ]);
     }
 
     /**
-     * @Route("/acticles/{slug}-{id}", name="article.show", requirements={"slug": "[a-z0-9\-]*"})
+     * @Route("/articles/{slug}-{id}", name="article.show", requirements={"slug": "[a-z0-9\-]*"})
      * @return Response
     */
 

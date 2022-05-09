@@ -3,13 +3,15 @@
 namespace App\Entity;
 
 use App\Repository\ArticleRepository;
-use DateTime;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 use DateTimeZone;
 use Doctrine\ORM\Mapping as ORM;
 use Cocur\Slugify\Slugify;
 
 /**
  * @ORM\Entity(repositoryClass=ArticleRepository::class)
+ * @UniqueEntity("title")
  */
 class Article
 {
@@ -22,6 +24,7 @@ class Article
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\Length(min=4, max =50)
      */
     private $title;
 

@@ -1,0 +1,17 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Create New Profile{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <h1>Create a new profile</h1>
+        {{ form_start(form) }} 
+        <div class="row">
+            <div class="col-md-6">{{ form_row(form.username) }}</div>
+        </div>
+            <div class="col-md-6">{{ form_row(form.password) }}</div>
+            <button class="btn btn-success m-4">Create profile</button>
+        {{ form_end(form) }}
+    </div>        
+            
+{% endblock %}
