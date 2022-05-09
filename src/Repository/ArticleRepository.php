@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Article;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Mapping\OrderBy;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Doctrine\ORM\QueryBuilder;
@@ -72,7 +73,8 @@ class ArticleRepository extends ServiceEntityRepository
     private function findAllVisibleQuery() : QueryBuilder
     {
         return $this->createQueryBuilder('a')
-        ->where('a.online = true');
+        ->where('a.online = true')
+        ->orderBy('a.created_at', 'DESC');
     }
 
     // /**

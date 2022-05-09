@@ -35,7 +35,7 @@ class ArticleController extends AbstractController
 
     public function index(): Response
     {
-        $article = $this->repository->findLatest();
+        $article = $this->repository->findAllVisible();
         return $this->render('article/index.html.twig', [
             'current_menu' => 'articles',
             'articles' => $article

@@ -5,6 +5,9 @@ home :
     path: /
     controller: App\Controller\HomeController::index
 
+logout:
+    path: /logout
+
 # article.index :
 #     path: /articles
 #     controller: App\Controller\ArticleController::index
