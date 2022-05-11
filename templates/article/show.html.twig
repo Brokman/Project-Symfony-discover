@@ -22,21 +22,28 @@
         <div class="text-muted text-end" style="font-weight: 100; font-size:0.8rem">Created {{ article.createdat.format('Y-m-d') }} at {{ article.createdat.format('H:i') }} by {{ article.userid.username }} </div>
 
         {% if article.comments is not empty %} <h4>Comments :</h4> {% endif %}
-        {% for comments in article.comments %}
+        {% for comment in article.comments %}
             <div class="m-4 border-top">
                 <div class="row justify-content-between ">
                     <div class="col-4"> 
-                        <p class="text-left text-muted">{{ comments.userid.username }} :</p>
+                        <p class="text-left text-muted">{{ comment.userid.username }} :</p>
                     </div>
                     <div class="col-4"> 
-                        <p class="text-end text-muted" style="font-weight: 100; font-size:0.8rem"> Posted {{ comments.postedat.format('Y-m-d') }} at {{ comments.postedat.format('H:i') }} </p>
+                        <p class="text-end text-muted" style="font-weight: 100; font-size:0.8rem"> Posted {{ comment.postedat.format('Y-m-d') }} at {{ comment.postedat.format('H:i') }} </p>
                     </div>
                     <div class="col-11">
                         <blockquote class="blockquote">
-                            <p class="text-end">{{ comments.commentary }}</p>
+                            <p class="text-end">{{ comment.commentary }}</p>
                         </blockquote>
                     </div>
                 </div>
+                {% if app.user and is_granted('ROLE_ADMIN') or app.user.username is same as(comment.userid.username) %}
+                    <div class="row justify-content-end">
+                        <div class="col-2">
+                            <a href="{{ path('article.comment.edit', {id: comment.id}) }}" class="btn btn-secondary m-2">Edit</a>
+                        </div>
+                    </div>
+                {% endif %}
             </div>
         {% endfor %}
         

@@ -1,0 +1,28 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Edit Comment{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <h1>Edit this comment</h1>
+        <div class="row">
+            <div class="col-md-6">Written by <strong>{{ comment.userid.username }}</strong> on {{ comment.postedat.format('Y-m-d@H:i:s') }}</div>
+        </div>
+        <div class="row m-4">
+            {{ form_start(form) }} 
+                {{ form_widget(form) }}
+                <button class="btn btn-primary m-4">Commit Changes</button>
+            {{ form_end(form) }}
+        </div>
+        <div class="row justify-content-end">
+            <div class="col-2">
+                <form action="{{path('article.comment.delete', {id: comment.id}) }}" method="POST" onsubmit="return confirm('Deleting this ?')">
+                    <input type="hidden" name="_method" value="DELETE">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ comment.id) }}">
+                    <button class="btn btn-outline-danger">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>        
+            
+{% endblock %}

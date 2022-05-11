@@ -3,8 +3,8 @@
 namespace App\Controller;
 
 use App\Entity\Comment;
+use App\Entity\User;
 use App\Form\CommentType;
-use App\Repository\ArticleRepository;
 use App\Repository\CommentRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -25,57 +25,76 @@ class CommentController extends AbstractController
      * @var CommentRepository
      */
     private $repository;
-    /**
-     * @var ArticleRepository
-     */
-    private $articleRepository;
 
-    public function __construct(CommentRepository $repository, EntityManagerInterface $em, ArticleRepository $articleRepository)
+    public function __construct(CommentRepository $repository, EntityManagerInterface $em)
     {
         $this->repository = $repository;
         $this->em = $em;
-        $this->articleRepository = $articleRepository;
     }
 
     /**
-     * @Route("/articles/{slug}-{id}", name="article.comment.post", requirements={"slug": "[a-z0-9\-]*"})
-     * @var User $user
-     * @param Security $security
+     * @Route("/article/comment/edit/{id}", name="article.comment.edit", methods="GET|POST") 
      * @param Request $request
-     * @return Response
-    */
-    public function addComment(int $id, string $slug,Request $request, Security $security): Response
+     * @param Security $security
+     * @var User $user
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function edit(int $id, Request $request, Security $security) 
     {
-        $comment = New Comment;
         $user = $security->getUser();
-        dump($user);
-        $article = $this->articleRepository->find($id);
-        if ($article->getSlug() !== $slug) {
+        $comment = $this->repository->find($id);
+        $article = $comment->getArticleId();
+
+        if(!empty($user) && ($user->getIsAdmin() || $user === $comment->getUserId()))
+        {
+            $form = $this->createForm(CommentType::class, $comment);
+            $form->handleRequest($request);
+
+            if($form->isSubmitted() && $form->isValid()){
+                $this->em->flush();
+                $this->addFlash('success', "Edition saved!");
+                return $this->redirectToRoute('article.show', [
+                    'id' => $article->getId(),
+                    'slug' => $article->getSlug()
+                ], 301);
+            }
+
+            return $this->render('article/comment/edit.html.twig', [
+                'comment' => $comment,
+                'form' => $form->createView()
+            ]);
+        } else {
+
+            $this->addFlash('failed', "You can't edit this comment, your are not the author nor an administrator");
             return $this->redirectToRoute('article.show', [
                 'id' => $article->getId(),
                 'slug' => $article->getSlug()
             ], 301);
         }
+        
+    }
 
-        $form = $this->createForm(CommentType::class, $comment);
-        $form->handleRequest($request);
+    /**
+     * @Route("/article/comment/edit/{id}", name="article.comment.delete", methods="DELETE") 
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function delete(int $id, Request $request)
+    {
+        $comment = $this->repository->find($id);
 
-        if($form->isSubmitted() && $form->isValid() && !empty($user)){
-            $comment->setUserId($user);
-            $comment->setArticleId($article);
-            $this->em->persist($comment);
+        if ($this->isCsrfTokenValid('delete' . $id, $request->get('_token'))) {
+            $this->em->remove($comment);
             $this->em->flush();
-            $this->addFlash('success', "Comment add");
-            return $this->redirectToRoute('article.show', [
-                'id' => $article->getId(),
-                'slug' => $article->getSlug()
-            ], 301);
+            $this->addFlash('success', "Deletion validated!");
+        } else {
+            $this->addFlash('failed', "Deletion failed! Your CSRF token isn't valide");
         }
 
-        return $this->render('article/show.html.twig', [
-            'article' => $article,
-            'user' => $user,
-            'form' => $form->createView()
-        ]);
+        $article = $comment->getArticleId();
+        return $this->redirectToRoute('article.show', [
+            'id' => $article->getId(),
+            'slug' => $article->getSlug()
+        ], 301);
     }
 }
