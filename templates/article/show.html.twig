@@ -17,7 +17,7 @@
             {% endfor %}
 
             <h1> {{ article.title }} </h1>
-            <p class="pt-4" style="font-size:1.2rem">{{ article.description | nl2br | capitalize  }}</p>
+            <p class="pt-4" style="font-size:1.2rem">{{ article.description | nl2br }}</p>
         </div>
         <div class="text-muted text-end" style="font-weight: 100; font-size:0.8rem">Created {{ article.createdat.format('Y-m-d') }} at {{ article.createdat.format('H:i') }} by {{ article.userid.username }} </div>
 

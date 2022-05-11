@@ -35,14 +35,13 @@ class CommentController extends AbstractController
     /**
      * @Route("/article/comment/edit/{id}", name="article.comment.edit", methods="GET|POST") 
      * @param Request $request
-     * @param Security $security
      * @var Comment $comment
      * @var User $user
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function edit(int $id, Request $request, Security $security)  : Response
+    public function edit(int $id, Request $request)  : Response
     {
-        $user = $security->getUser();
+        $user = $this->getUser();
         $comment = $this->repository->find($id);
         $article = $comment->getArticleId();
 
