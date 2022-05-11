@@ -90,13 +90,19 @@ class ArticleController extends AbstractController
             }elseif($form->isSubmitted()) {
                 $this->addFlash('failed', "Comment could not be added");
             }
+
+            return $this->render('article/show.html.twig', [
+                'user' => $user,
+                'article' => $article,
+                'comment' => $comment,
+                'form' => $form->createView(),
+                'current_menu' => 'articles'
+            ]);
         }
 
         return $this->render('article/show.html.twig', [
             'user' => $user,
             'article' => $article,
-            'comment' => $comment,
-            'form' => $form->createView(),
             'current_menu' => 'articles'
         ]);
     }
