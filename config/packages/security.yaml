@@ -14,6 +14,7 @@ security:
             provider: from_database
             logout: 
                 path: app_logout
+                invalidate_session: false
                 # path: /logout
                 # target: /
             # activate different ways to authenticate
