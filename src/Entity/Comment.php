@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\CommentRepository;
+use DateTimeZone;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -41,6 +42,16 @@ class Comment
      * @ORM\Column(type="integer", nullable=true)
      */
     private $approval;
+
+    /**
+     * @ORM\Column(type="datetime_immutable")
+     */
+    private $posted_at;
+
+    public function __construct()
+    {
+        $this->posted_at = new \DateTimeImmutable('now', new DateTimeZone('EUROPE/Paris'));
+    }
 
     public function getId(): ?int
     {
@@ -91,6 +102,18 @@ class Comment
     public function setApproval(?int $approval): self
     {
         $this->approval = $approval;
+
+        return $this;
+    }
+
+    public function getPostedAt(): ?\DateTimeImmutable
+    {
+        return $this->posted_at;
+    }
+
+    public function setPostedAt(\DateTimeImmutable $posted_at): self
+    {
+        $this->posted_at = $posted_at;
 
         return $this;
     }

@@ -135,7 +135,7 @@ class SecurityController extends AbstractController
                 return $this->redirectToRoute('admin.users.index');
             }
             $userArticles = $user->getArticles();
-            if($userArticles)
+            if(!empty($userArticles))
             {
                 $defaultuser = $this->repository->find(2);
                 foreach ($userArticles as $article) {

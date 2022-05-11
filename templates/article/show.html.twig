@@ -17,11 +17,11 @@
             {% endfor %}
 
             <h1> {{ article.title }} </h1>
-            <p class="pt-4">{{ article.description | nl2br | capitalize  }}</p>
+            <p class="pt-4" style="font-size:1.2rem">{{ article.description | nl2br | capitalize  }}</p>
         </div>
-        <div class="text-muted text-end" style="font-weight: 100; font-size:0.8rem">Created the {{ article.createdat.format('Y-m-d') }} at {{ article.createdat.format('H:i') }} by {{ article.userid.username }} </div>
+        <div class="text-muted text-end" style="font-weight: 100; font-size:0.8rem">Created {{ article.createdat.format('Y-m-d') }} at {{ article.createdat.format('H:i') }} by {{ article.userid.username }} </div>
 
-        {% if article.comments is not empty %} <h3>Comments :</h3> {% endif %}
+        {% if article.comments is not empty %} <h4>Comments :</h4> {% endif %}
         {% for comments in article.comments %}
             <div class="m-4 border-top">
                 <div class="row justify-content-between ">
@@ -29,7 +29,7 @@
                         <p class="text-left text-muted">{{ comments.userid.username }} :</p>
                     </div>
                     <div class="col-4"> 
-                        <p class="text-end text-muted" style="font-weight: 100; font-size:0.8rem">{{ comments.userid.username }} :</p>
+                        <p class="text-end text-muted" style="font-weight: 100; font-size:0.8rem"> Posted {{ comments.postedat.format('Y-m-d') }} at {{ comments.postedat.format('H:i') }} </p>
                     </div>
                     <div class="col-11">
                         <blockquote class="blockquote">
