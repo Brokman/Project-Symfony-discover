@@ -2,6 +2,7 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Article;
+use App\Entity\User;
 use App\Form\ArticleType;
 use App\Repository\ArticleRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -10,6 +11,7 @@ use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Security;
 
 class AdminArticleController extends AbstractController 
 {
@@ -40,16 +42,19 @@ class AdminArticleController extends AbstractController
 
     /**
      * @Route("/admin/article/create", name="admin.article.new") 
+     * @var User $user
      * @param Request $request
      * @return Response
      */
-    public function new(Request $request) : Response
-    {   
+    public function new(Request $request, Security $security) : Response
+    {
+        $user = $security->getUser();
         $article = new Article;
         $form = $this->createForm(ArticleType::class, $article);
         $form->handleRequest($request);
 
-        if($form->isSubmitted() && $form->isValid()){
+        if($form->isSubmitted() && $form->isValid() && !empty($user)){
+            $article->setUserId($user);
             $this->em->persist($article);
             $this->em->flush();
             $this->addFlash('success', "Creation saved!");

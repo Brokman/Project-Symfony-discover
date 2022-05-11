@@ -53,6 +53,12 @@ class Article
      */
     private $created_at;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="articles")
+     * @ORM\JoinColumn(nullable=true)
+     */
+    private $user_id;
+
     public function __construct()
     {
         $this->created_at = new \DateTimeImmutable('now', new DateTimeZone('EUROPE/Paris'));
@@ -99,7 +105,7 @@ class Article
 
     public function setIsOnline(?bool $is_online): self
     {
-        $this->online = $is_online;
+        $this->is_online = $is_online;
 
         return $this;
     }
@@ -136,6 +142,18 @@ class Article
     public function setCreatedAt(\DateTimeImmutable $created_at): self
     {
         $this->created_at = $created_at;
+
+        return $this;
+    }
+
+    public function getUserId(): ?User
+    {
+        return $this->user_id;
+    }
+
+    public function setUserId(?User $user_id): self
+    {
+        $this->user_id = $user_id;
 
         return $this;
     }

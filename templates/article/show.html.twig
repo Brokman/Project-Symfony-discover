@@ -8,6 +8,7 @@
             <h1> {{ article.title }} </h1>
             <p class="pt-4">{{ article.description | nl2br | capitalize  }}</p>
         </div>
+        <div class="text-muted" style="font-weight: 100; font-size:0.8rem; text-align: right;">Created the {{ article.createdat.format('Y-m-d') }} at {{ article.createdat.format('H:i') }} by {{ article.userid.username }} </div>
     </div>
     
 {% endblock %}

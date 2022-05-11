@@ -16,7 +16,7 @@
                                 <a href=" {{ path('article.show', {id: article.id, slug: article.slug}) }} ">{{ article.title }}</a>
                             </h5>
                             <p class="card-text"> {{ article.description }} </p>
-                            <div class="text-muted" style="font-weight: 100; font-size:0.8rem">Créé le {{ article.createdat.format('Y-m-d') }} à {{ article.createdat.format('H:i') }}  </div>
+                            <div class="text-muted" style="font-weight: 100; font-size:0.8rem">Created the {{ article.createdat.format('Y-m-d') }} at {{ article.createdat.format('H:i') }}  </div>
                         </div>
                     </div>
                 </div>
