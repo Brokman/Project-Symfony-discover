@@ -17,7 +17,7 @@ class ArticleType extends AbstractType
         $builder
             ->add('title')
             ->add('description')
-            ->add('online', null, [
+            ->add('is_online', null, [
                 'label' => 'Visible Online'
             ])
             // ->add('approved')

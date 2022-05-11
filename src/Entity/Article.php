@@ -36,7 +36,7 @@ class Article
     /**
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private $online;
+    private $is_online;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
@@ -92,14 +92,14 @@ class Article
         return $this;
     }
 
-    public function getOnline(): ?bool
+    public function getIsOnline(): ?bool
     {
-        return $this->online;
+        return $this->is_online;
     }
 
-    public function setOnline(?bool $online): self
+    public function setIsOnline(?bool $is_online): self
     {
-        $this->online = $online;
+        $this->online = $is_online;
 
         return $this;
     }

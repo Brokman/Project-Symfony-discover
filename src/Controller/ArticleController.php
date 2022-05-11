@@ -61,12 +61,3 @@ class ArticleController extends AbstractController
         ]);
     }
 }
-
-
-        // $article = new Article();
-        // $article->setTitle('Premier Article')
-        //     ->setDescription('Premier article, présentation')
-        //     ->setOnline(true);
-        // $em = $this->getDoctrine()->getManager();
-        // $em->persist($article);
-        // $em->flush();
