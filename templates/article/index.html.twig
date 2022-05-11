@@ -15,7 +15,7 @@
                             <h5 class="card-title">
                                 <a href=" {{ path('article.show', {id: article.id, slug: article.slug}) }} ">{{ article.title }}</a>
                             </h5>
-                            <p class="card-text"> {{ article.description }} </p>
+                            <p class="card-text"> {{ article.description | u.truncate(150, '...') }} </p>
                             <div class="text-muted" style="font-weight: 100; font-size:0.8rem">Created the {{ article.createdat.format('Y-m-d') }} at {{ article.createdat.format('H:i') }}  </div>
                         </div>
                     </div>
@@ -23,9 +23,12 @@
             {% endfor %}
         </div>
     </div>
-    <div class="fixed-bottom d-grid gap-2 d-md-flex justify-content-md-end">
-        <div class="m-4 pb-5">
-            <a href="{{ path('admin.article.index') }}" class="btn btn-outline-secondary">Admin Panel</a>
-        </div>    
-    </div>
+    {% if is_granted('ROLE_ADMIN') %}
+        <div class="fixed-bottom d-grid gap-2 d-md-flex justify-content-md-end">
+            <div class="m-4 pb-5">
+                <a href="{{ path('admin.article.index') }}" class="btn btn-outline-secondary">Admin Panel</a>
+            </div>    
+        </div>
+    {% endif %}
+    
 {% endblock %}
