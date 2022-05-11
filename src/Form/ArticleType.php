@@ -19,7 +19,6 @@ class ArticleType extends AbstractType
                 'label' => 'Visible Online'
             ])
             // ->add('approved')
-            // ->add('disapproved')
             // ->add('created_at')
             // ->add('user_id')
         ;

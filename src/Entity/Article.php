@@ -44,11 +44,6 @@ class Article
     private $approved;
 
     /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    private $disapproved;
-
-    /**
      * @ORM\Column(type="datetime_immutable")
      */
     private $created_at;
@@ -118,18 +113,6 @@ class Article
     public function setApproved(?int $approved): self
     {
         $this->approved = $approved;
-
-        return $this;
-    }
-
-    public function getDisapproved(): ?int
-    {
-        return $this->disapproved;
-    }
-
-    public function setDisapproved(?int $disapproved): self
-    {
-        $this->disapproved = $disapproved;
 
         return $this;
     }

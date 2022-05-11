@@ -134,6 +134,14 @@ class SecurityController extends AbstractController
                 $this->addFlash('failed', "You can't modify this user!");
                 return $this->redirectToRoute('admin.users.index');
             }
+            $userArticles = $user->getArticles();
+            if($userArticles)
+            {
+                $defaultuser = $this->repository->find(2);
+                foreach ($userArticles as $article) {
+                    $article->setUserId($defaultuser);
+                }
+            }
             $this->em->remove($user);
             $this->em->flush();
             $this->addFlash('success', "Deletion validated!");
