@@ -36,10 +36,11 @@ class CommentController extends AbstractController
      * @Route("/article/comment/edit/{id}", name="article.comment.edit", methods="GET|POST") 
      * @param Request $request
      * @param Security $security
+     * @var Comment $comment
      * @var User $user
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function edit(int $id, Request $request, Security $security) 
+    public function edit(int $id, Request $request, Security $security)  : Response
     {
         $user = $security->getUser();
         $comment = $this->repository->find($id);
@@ -76,10 +77,11 @@ class CommentController extends AbstractController
 
     /**
      * @Route("/article/comment/edit/{id}", name="article.comment.delete", methods="DELETE") 
+     * @var Comment $comment
      * @param Request $request
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function delete(int $id, Request $request)
+    public function delete(int $id, Request $request) : Response
     {
         $comment = $this->repository->find($id);
 
