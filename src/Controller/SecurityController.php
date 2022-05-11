@@ -90,7 +90,7 @@ class SecurityController extends AbstractController
             $this->em->persist($user);
             $this->em->flush();
             $this->addFlash('success', "New profile saved!");
-            return $this->redirectToRoute('home');
+            return $this->redirectToRoute('login');
         }
 
         return $this->render('security/create.html.twig', [
