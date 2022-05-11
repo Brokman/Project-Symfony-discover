@@ -5,10 +5,64 @@
 {% block body %}
     <div class="container">
         <div class="text-center m-4">
+            {% for message in app.flashes('success') %}
+                <div class="alert alert-success">
+                    {{ message }}
+                </div>
+            {% endfor %}
+            {% for message in app.flashes('failed') %}
+                <div class="alert alert-danger">
+                    {{ message }}
+                </div>
+            {% endfor %}
+
             <h1> {{ article.title }} </h1>
             <p class="pt-4">{{ article.description | nl2br | capitalize  }}</p>
         </div>
-        <div class="text-muted" style="font-weight: 100; font-size:0.8rem; text-align: right;">Created the {{ article.createdat.format('Y-m-d') }} at {{ article.createdat.format('H:i') }} by {{ article.userid.username }} </div>
+        <div class="text-muted text-end" style="font-weight: 100; font-size:0.8rem">Created the {{ article.createdat.format('Y-m-d') }} at {{ article.createdat.format('H:i') }} by {{ article.userid.username }} </div>
+
+        {% if article.comments is not empty %} <h3>Comments :</h3> {% endif %}
+        {% for comments in article.comments %}
+            <div class="m-4 border-top">
+                <div class="row justify-content-between ">
+                    <div class="col-4"> 
+                        <p class="text-left text-muted">{{ comments.userid.username }} :</p>
+                    </div>
+                    <div class="col-4"> 
+                        <p class="text-end text-muted" style="font-weight: 100; font-size:0.8rem">{{ comments.userid.username }} :</p>
+                    </div>
+                    <div class="col-11">
+                        <blockquote class="blockquote">
+                            <p class="text-end">{{ comments.commentary }}</p>
+                        </blockquote>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+        
     </div>
+
+    {% if app.user %}
+        <div class="row justify-content-end">
+            <div class="col-3">
+                <button class="btn btn-outline-secondary mt-4" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">Add a Comment</button>
+            </div>
+        </div>
+
+        <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasBottom" aria-labelledby="offcanvasBottomLabel">
+            <div class="offcanvas-header">
+                <h5 class="offcanvas-title" id="offcanvasBottomLabel">Your Commentary :</h5>
+                <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+            <div class="offcanvas-body small pt-0">
+                {{ form_start(form) }} 
+                    <div class="row align-items-center">
+                        <div class="col col-9">{{ form_row(form.commentary) }}</div>
+                        <div class="col col-3"><button type="submit" class="btn btn-outline-primary mt-3">Add Comment</button></div>
+                    </div>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    {% endif %}
     
 {% endblock %}

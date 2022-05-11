@@ -43,6 +43,7 @@ class AdminArticleController extends AbstractController
     /**
      * @Route("/admin/article/create", name="admin.article.new") 
      * @var User $user
+     * @param Security $security
      * @param Request $request
      * @return Response
      */
