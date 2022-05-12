@@ -41,12 +41,13 @@
                         </blockquote>
                     </div>
                 </div>
+                {% include 'article/comment/com-approval.html.twig' with {'comment': comment} %}
+
                 {% if app.user and is_granted('ROLE_ADMIN') or app.user and app.user.username is same as(comment.userid.username) %}
                     <div class="row justify-content-end">
                         <div class="col-2">
                             <a href="{{ path('article.comment.edit', {id: comment.id}) }}" class="btn btn-secondary m-2">Edit</a>
                         </div>
-                        {# {% include 'article/approval.html.twig' with {'article': comment} %} #}
                     </div>
                 {% endif %}
             </div>

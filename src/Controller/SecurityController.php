@@ -12,7 +12,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
-
 class SecurityController extends AbstractController 
 {
     /**
@@ -23,16 +22,11 @@ class SecurityController extends AbstractController
      * @var UserRepository
      */
     private $repository;
-    /**
-     * @var UserPasswordEncoderInterface
-     */
-    private $encoder;
 
-    public function __construct(UserRepository $repository, EntityManagerInterface $em, UserPasswordEncoderInterface $encoder)
+    public function __construct(UserRepository $repository, EntityManagerInterface $em)
     {
         $this->repository = $repository;
         $this->em = $em;
-        $this->encoder = $encoder;
     }
 
     /**
@@ -44,21 +38,24 @@ class SecurityController extends AbstractController
     {
         $error = $authenticationUtils->getLastAuthenticationError();
         $lastUsername = $authenticationUtils->getLastUsername();
-        if(!$error) {
-        $this->addFlash('success', "You are now logged in");
-        }
         return $this->render('security/login.html.twig', [
             'last_username' => $lastUsername,
             'error' => $error
         ]);
     }
 
+    public function authentificationMessages (string $type, string $message) 
+    {
+        return $this->addFlash($type, $message);
+    }
+
+
     /**
      * @Route("/logout", name="app_logout")
      */
     public function logout()
     {
-        $this->addFlash('notice', "You are now logged out");
+        return $this->redirectToRoute('home');
     }
 
     /**

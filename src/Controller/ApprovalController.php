@@ -3,7 +3,6 @@ namespace App\Controller;
 
 use App\Entity\Approval;
 use App\Entity\Article;
-use App\Form\ApprovalType;
 use App\Repository\ApprovalRepository;
 use App\Repository\ArticleRepository;
 use App\Repository\CommentRepository;
@@ -65,11 +64,11 @@ class ApprovalController extends AbstractController
 
                 $count = $article->getApproveCount();
                 if(isset($approval)) {
-                    if(($request->get('_pos')) && ($approval->getIsPositive() === false)) {
-                        $count += 1;
+                    if(($request->get('_pos')) && ($approval->getIsPositive() == false)) {
+                        $count += 2;
                         $approval->setIsPositive(true);
-                    } elseif(($request->get('_min')) && ($approval->getIsPositive() === true)) {
-                        $count -= 1;
+                    } elseif(($request->get('_min')) && ($approval->getIsPositive() == true)) {
+                        $count -= 2;
                         $approval->setIsPositive(false);
                     } else {
                         $this->addFlash('failed', "vote already have same value");
@@ -87,7 +86,7 @@ class ApprovalController extends AbstractController
                     $approval->setIsPositive($request->get('_pos'));
                     if($request->get('_pos')) {
                         $count += 1;
-                    } else {
+                    } elseif ($request->get('_min')) {
                         $count -= 1;
                     }
                     $article->setApproveCount($count);
@@ -112,32 +111,33 @@ class ApprovalController extends AbstractController
 
 
     /**
-     * @Route("/articles/{slug}-{id}", name="approval.comment", requirements={"slug": "[a-z0-9\-]*"}, methods="VOTE") 
+     * @Route("/articles/{slug}-{id}/{commentId}", name="approval.comment", requirements={"slug": "[a-z0-9\-]*"}, methods="COMMENTVOTE") 
      * @var User $user
      * @param Request $request
      * @return Response
      */
-    public function voteComment(int $id, string $slug, Request $request) : Response
+    public function voteComment(int $commentId, int $id, string $slug, Request $request) : Response
     {
         $user = $this->getUser();
+        $comment = $this->commentRepository->find($commentId);
         $article = $this->articleRepository->find($id);
 
         if(!empty($user) && (!empty($request->get('_pos')) || !empty($request->get('_min')) )) {
-            if ($this->isCsrfTokenValid('vote' . $id, $request->get('_token'))) {
+            if ($this->isCsrfTokenValid('vote' . $commentId, $request->get('_token'))) {
                 $userVotes = $user->getApprovals();
                 foreach ($userVotes as $vote) {
-                    if($vote->getArticleId() === $article) {
+                    if($vote->getCommentId() === $comment) {
                         $approval = $vote;
                     }
                 }
 
-                $count = $article->getApproveCount();
+                $count = $comment->getApproveCount();
                 if(isset($approval)) {
-                    if(($request->get('_pos')) && ($approval->getIsPositive() === false)) {
-                        $count += 1;
+                    if(($request->get('_pos')) && ($approval->getIsPositive() == false)) {
+                        $count += 2;
                         $approval->setIsPositive(true);
-                    } elseif(($request->get('_min')) && ($approval->getIsPositive() === true)) {
-                        $count -= 1;
+                    } elseif(($request->get('_min')) && ($approval->getIsPositive() == true)) {
+                        $count -= 2;
                         $approval->setIsPositive(false);
                     } else {
                         $this->addFlash('failed', "vote already have same value");
@@ -146,19 +146,19 @@ class ApprovalController extends AbstractController
                             'slug' => $article->getSlug()
                         ], 301);
                     }   
-                    $article->setApproveCount($count);
+                    $comment->setApproveCount($count);
                     $this->em->flush();
                 } else {
                     $approval = new Approval;
                     $approval->setUserId($user);
-                    $approval->setArticleId($article);
+                    $approval->setCommentId($comment);
                     $approval->setIsPositive($request->get('_pos'));
                     if($request->get('_pos')) {
                         $count += 1;
-                    } else {
+                    } elseif ($request->get('_min')) {
                         $count -= 1;
                     }
-                    $article->setApproveCount($count);
+                    $comment->setApproveCount($count);
                     $this->em->persist($approval);
                     $this->em->flush();
                 }
@@ -177,60 +177,5 @@ class ApprovalController extends AbstractController
             'slug' => $article->getSlug()
         ], 301);
     }
-
-    
-    
-        // /**
-    //  * @Route("/articles/approve/{id}", name="approval", requirements={"slug": "[a-z0-9\-]*"})
-    //  * @var User $user
-    //  * @var Comment $comment
-    //  * @param Request $request
-    //  * @param Article $article
-    //  * @return Response
-    //  */
-    // public function addApproval(Article $article, int $id, Request $request): Response
-    // {
-    //     $approval = new Approval;
-        
-    //     $subject = $article;
-    //     $approval->setArticleId($subject);
-        
-
-    //     $user = $this->getUser();
-    //     $approval->setUserId($user);
-
-    //     $subject->setApproveCount(-1); 
-    //     $approval->setIsPositive(false);
-        
-    //     $this->em->persist($approval);
-    //     $this->em->flush();
-    //     $this->addFlash('success', "Comment add");
-    //     return $this->redirectToRoute('article.show', [
-    //         'id' => $article->getId(),
-    //         'slug' => $article->getSlug()
-    //     ], 301);
-    // }
-
-    // /**
-    //  * @Route("/articles/{slug}-{id}", name="approval", requirements={"slug": "[a-z0-9\-]*"}, methods="VOTE") 
-    //  * @var User $user
-    //  * @param Request $request
-    //  * @return Response
-    //  */
-    // public function new(int $id, string $slug, Request $request) : Response
-    // {
-    //     $user = $this->getUser();
-    //     $article = $this->articleRepository->find($id);
-    //     $approval = new Approval;
-    //     $approval->setUserId($user);
-
-    //     $this->em->persist($approval);
-    //     $this->em->flush();
-    //     $this->addFlash('success', "Vote saved!");
-    //     return $this->redirectToRoute('article.show', [
-    //         'id' => $article->getId(),
-    //         'slug' => $article->getSlug()
-    //     ], 301);
-    // }
 
 }

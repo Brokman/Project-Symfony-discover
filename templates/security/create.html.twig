@@ -7,9 +7,10 @@
         <h1>Create a new profile</h1>
         {{ form_start(form) }} 
         <div class="row">
-            <div class="col-md-6">{{ form_row(form.username) }}</div>
+            <div class="col-md-6">{{ form_row(form.username, {'attr': {'placeholder': 'username ...'}}) }}</div>
         </div>
             <div class="col-md-6">{{ form_row(form.password) }}</div>
+            <div class="col-md-6">{{ form_row(form.confirm_password) }}</div>
             <button class="btn btn-success m-4">Create profile</button>
         {{ form_end(form) }}
     </div>        

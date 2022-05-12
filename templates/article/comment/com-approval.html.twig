@@ -1,0 +1,54 @@
+{% set didVote, votePos, voteMin = false, false, false %}
+
+{% if app.user %}
+    {% for approval in comment.approvals %}
+        {% if app.user.id == approval.userid.id %} 
+            {% set didVote = true %}
+            {% if approval.ispositive == true %}
+                {% set votePos, voteMin = false, true %}
+            {% else %}
+                {% set votePos, voteMin = true, false %}
+            {% endif %} 
+        {% else %}
+        {% endif %}   
+    {% endfor %}
+    {% if didVote == false %}
+        {% set votePos, voteMin = true, true %}
+    {% endif %}
+{% else %}
+    {% set votePos, voteMin = false, false %}
+{% endif %}
+
+<div class="row justify-content-end align-items-center ">
+        <div class="col-1 text-end p-0">
+            <form action="{{ path('approval.comment', {commentId: comment.id, id: comment.articleid.id, slug: comment.articleid.slug}) }}" method="POST">
+                    <div class="row align-items-center">
+                        <input type="hidden" name="_method" value="COMMENTVOTE">
+                        <input type="hidden" name="_token" value="{{ csrf_token('vote' ~ comment.id) }}">
+                        <input type="hidden" name="_pos" value="1">
+                        <div class="col col-3">
+                            <button type="submit" class="btn btn{% if didVote == false or votePos == true %}-outline{% endif %}-success{% if votePos == false %} disabled{% endif %}"{% if votePos == false %} disabled{% endif %}>
+                                UP
+                            </button>
+                        </div>
+                    </div>
+            </form>
+        </div>
+        <div class="col-1 text-center p-0">
+            <strong {% if comment.approvecount > 0 %}style="color: green"{% elseif comment.approvecount < 0 %}style="color: red"{% endif %}>{{ comment.approvecount }} {% if comment.approvecount is null %} 0 {% endif %}</strong>
+        </div>
+        <div class="col-1 p-0">
+            <form action="{{ path('approval.comment', {commentId: comment.id, id: comment.articleid.id, slug: comment.articleid.slug}) }}" method="POST">
+                <div class="row align-items-center">
+                    <input type="hidden" name="_method" value="COMMENTVOTE">
+                    <input type="hidden" name="_token" value="{{ csrf_token('vote' ~ comment.id) }}">
+                    <input type="hidden" name="_min" value="1">
+                    <div class="col col-3">
+                        <button type="submit" class="btn btn{% if didVote == false or voteMin == true %}-outline{% endif %}-danger{% if voteMin == false %} disabled{% endif %}"{% if voteMin == false %} disabled{% endif %}>
+                            DOWN
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+</div>
