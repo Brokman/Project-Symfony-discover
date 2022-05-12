@@ -44,11 +44,21 @@ class SecurityController extends AbstractController
     {
         $error = $authenticationUtils->getLastAuthenticationError();
         $lastUsername = $authenticationUtils->getLastUsername();
+        if(!$error) {
         $this->addFlash('success', "You are now logged in");
+        }
         return $this->render('security/login.html.twig', [
             'last_username' => $lastUsername,
             'error' => $error
         ]);
+    }
+
+    /**
+     * @Route("/logout", name="app_logout")
+     */
+    public function logout()
+    {
+        $this->addFlash('notice', "You are now logged out");
     }
 
     /**
@@ -80,7 +90,7 @@ class SecurityController extends AbstractController
             $this->em->persist($user);
             $this->em->flush();
             $this->addFlash('success', "New profile saved!");
-            return $this->redirectToRoute('home');
+            return $this->redirectToRoute('login');
         }
 
         return $this->render('security/create.html.twig', [
@@ -124,6 +134,35 @@ class SecurityController extends AbstractController
                 $this->addFlash('failed', "You can't modify this user!");
                 return $this->redirectToRoute('admin.users.index');
             }
+
+            $defaultuser = $this->repository->find(2);
+            $userArticles = $user->getArticles();
+            if(!empty($userArticles))
+            {
+                
+                foreach ($userArticles as $article) {
+                    $article->setUserId($defaultuser);
+                    $this->em->flush();
+                }
+            }
+            $userComments = $user->getComments();
+            if(!empty($userComments))
+            {
+                foreach ($userComments as $comment) {
+                    $comment->setUserId($defaultuser);
+                    $this->em->flush();
+                }
+            }
+            $userVotes = $user->getApprovals();
+            if(!empty($userVotes))
+            {
+                foreach ($userVotes as $vote) {
+                    $vote->setUserId($defaultuser);
+                    $this->em->flush();
+                }
+            }
+
+
             $this->em->remove($user);
             $this->em->flush();
             $this->addFlash('success', "Deletion validated!");

@@ -39,7 +39,7 @@
                     {% if app.user %}
                         <ul class="navbar-nav align-self-end">
                             <li class="nav-item">
-                                <a href="{{ path('logout', {'logout': true}) }}" class="nav-link"><button class="btn btn-outline-secondary ">Logout</button></a>
+                                <a href="{{ path('app_logout') }}" class="nav-link"><button class="btn btn-outline-secondary ">Logout</button></a>
                             </li>
                         </ul>
                     {% else %}

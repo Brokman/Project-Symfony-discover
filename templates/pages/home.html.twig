@@ -7,7 +7,8 @@
         <h1>Blog Brok</h1>
     </div>
 
-    {% for message in app.flashes('success') %}
+    {% if app.user %}
+        {% for message in app.flashes('success') %}
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col col-6">
@@ -16,25 +17,26 @@
                         {% if is_granted('ROLE_ADMIN') %}
                             <strong>Admin</strong>
                         {% else %}
-                            <strong>Admin</strong>
+                            <strong>User</strong>
                         {% endif %}
                     </div>
                 </div>
             </div>
         </div>
-    {% endfor %}
+        {% endfor %}
+    {% endif %}
     
-    {% if logout is defined and logout == true %}
-        <div class="container justify-content-center">
-            <div class="row justify-content-center"></div>
-                <div class="col col-6">
-                    <div class="alert alert-warning">
-                        You are now logout
-                    </div>
+    {% for message in app.flashes('notice') %}
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col col-6">
+                <div class="alert alert-warning">
+                    {{ message }}
                 </div>
             </div>
         </div>
-    {% endif %}
+    </div>
+    {% endfor %}
 
     <div class="container">
         <h2>Last Articles</h2>
@@ -46,7 +48,7 @@
                             <h5 class="card-title">
                                 <a href=" {{ path('article.show', {id: article.id, slug: article.slug}) }} ">{{ article.title }}</a>
                             </h5>
-                            <p class="card-text"> {{ article.description }} </p>
+                            <p class="card-text"> {{ article.description | u.truncate(145, '...')}} </p>
                             <div class="text-muted" style="font-weight: 100; font-size:0.8rem">Créé le {{ article.createdat.format('Y-m-d') }} à {{ article.createdat.format('H:i') }}  </div>
                         </div>
                     </div>

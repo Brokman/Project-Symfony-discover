@@ -13,8 +13,10 @@ security:
             anonymous: lazy
             provider: from_database
             logout: 
-                path: /logout
-                target: /
+                path: app_logout
+                invalidate_session: false
+                # path: /logout
+                # target: /
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#firewalls-authentication
             form_login:

@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\ArticleRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 use DateTimeZone;
@@ -36,26 +38,39 @@ class Article
     /**
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private $online;
-
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    private $approved;
-
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    private $disapproved;
+    private $is_online;
 
     /**
      * @ORM\Column(type="datetime_immutable")
      */
     private $created_at;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="articles")
+     * @ORM\JoinColumn(nullable=true)
+     */
+    private $user_id;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Comment::class, mappedBy="article_id", orphanRemoval=true)
+     */
+    private $comments;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Approval::class, mappedBy="article_id")
+     */
+    private $approvals;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $approve_count;
+
     public function __construct()
     {
         $this->created_at = new \DateTimeImmutable('now', new DateTimeZone('EUROPE/Paris'));
+        $this->comments = new ArrayCollection();
+        $this->approvals = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -92,38 +107,14 @@ class Article
         return $this;
     }
 
-    public function getOnline(): ?bool
+    public function getIsOnline(): ?bool
     {
-        return $this->online;
+        return $this->is_online;
     }
 
-    public function setOnline(?bool $online): self
+    public function setIsOnline(?bool $is_online): self
     {
-        $this->online = $online;
-
-        return $this;
-    }
-
-    public function getApproved(): ?int
-    {
-        return $this->approved;
-    }
-
-    public function setApproved(?int $approved): self
-    {
-        $this->approved = $approved;
-
-        return $this;
-    }
-
-    public function getDisapproved(): ?int
-    {
-        return $this->disapproved;
-    }
-
-    public function setDisapproved(?int $disapproved): self
-    {
-        $this->disapproved = $disapproved;
+        $this->is_online = $is_online;
 
         return $this;
     }
@@ -136,6 +127,90 @@ class Article
     public function setCreatedAt(\DateTimeImmutable $created_at): self
     {
         $this->created_at = $created_at;
+
+        return $this;
+    }
+
+    public function getUserId(): ?User
+    {
+        return $this->user_id;
+    }
+
+    public function setUserId(?User $user_id): self
+    {
+        $this->user_id = $user_id;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Comment>
+     */
+    public function getComments(): Collection
+    {
+        return $this->comments;
+    }
+
+    public function addComment(Comment $comment): self
+    {
+        if (!$this->comments->contains($comment)) {
+            $this->comments[] = $comment;
+            $comment->setArticleId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeComment(Comment $comment): self
+    {
+        if ($this->comments->removeElement($comment)) {
+            // set the owning side to null (unless already changed)
+            if ($comment->getArticleId() === $this) {
+                $comment->setArticleId(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Approval>
+     */
+    public function getApprovals(): Collection
+    {
+        return $this->approvals;
+    }
+
+    public function addApproval(Approval $approval): self
+    {
+        if (!$this->approvals->contains($approval)) {
+            $this->approvals[] = $approval;
+            $approval->setArticleId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeApproval(Approval $approval): self
+    {
+        if ($this->approvals->removeElement($approval)) {
+            // set the owning side to null (unless already changed)
+            if ($approval->getArticleId() === $this) {
+                $approval->setArticleId(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getApproveCount(): ?int
+    {
+        return $this->approve_count;
+    }
+
+    public function setApproveCount(?int $approve_count): self
+    {
+        $this->approve_count = $approve_count;
 
         return $this;
     }
