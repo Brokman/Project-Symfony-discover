@@ -3,7 +3,6 @@ namespace App\Controller;
 
 use App\Entity\Approval;
 use App\Entity\Article;
-use App\Form\ApprovalType;
 use App\Repository\ApprovalRepository;
 use App\Repository\ArticleRepository;
 use App\Repository\CommentRepository;
