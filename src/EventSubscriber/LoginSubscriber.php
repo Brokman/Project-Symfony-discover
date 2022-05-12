@@ -23,7 +23,7 @@ class LoginSubscriber implements EventSubscriberInterface
         // return the subscribed events, their methods and priorities
         return [
             SecurityEvents::INTERACTIVE_LOGIN => 'onLogin',
-            Symfony\Component\Security\Http\Event\DeauthenticatedEvent::class => 'onLogout'
+            // Symfony\Component\Security\Http\Event\DeauthenticatedEvent::class => 'onLogout'
         ];
     }
 
@@ -33,8 +33,8 @@ class LoginSubscriber implements EventSubscriberInterface
         $this->securityController->authentificationMessages('success', "You are now logged in");
     }
 
-    public function onLogout()
-    {
-        $this->securityController->authentificationMessages('failed', "You are now logged out");
-    }
+    // public function onLogout()
+    // {
+    //     $this->securityController->authentificationMessages('failed', "You are now logged out");
+    // }
 }

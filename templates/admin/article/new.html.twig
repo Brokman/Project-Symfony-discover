@@ -7,9 +7,13 @@
         <h1>Create a new article</h1>
         {{ form_start(form) }} 
         <div class="row">
+
             <div class="col-md-6">{{ form_row(form.title) }}</div>
+            <div class="col-md-6">{{ form_row(form.pictureFile) }}</div>
+
         </div>
             {{ form_widget(form) }}
+
             <button class="btn btn-primary m-4">Create Article</button>
         {{ form_end(form) }}
     </div>        
