@@ -35,6 +35,7 @@ class SecurityController extends AbstractController
         $this->encoder = $encoder;
     }
 
+    
     /**
      * @Route("/login", name="login")
      * @param AuthenticationUtils $authenticationUtils 
@@ -52,6 +53,7 @@ class SecurityController extends AbstractController
             'error' => $error
         ]);
     }
+
 
     /**
      * @Route("/logout", name="app_logout")

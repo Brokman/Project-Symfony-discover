@@ -46,7 +46,7 @@
                         <div class="col-2">
                             <a href="{{ path('article.comment.edit', {id: comment.id}) }}" class="btn btn-secondary m-2">Edit</a>
                         </div>
-                        {# {% include 'article/approval.html.twig' with {'article': comment} %} #}
+                        {% include 'article/comment/com-approval.html.twig' with {'comment': comment} %}
                     </div>
                 {% endif %}
             </div>
