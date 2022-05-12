@@ -41,11 +41,6 @@ class Article
     private $is_online;
 
     /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    private $approved;
-
-    /**
      * @ORM\Column(type="datetime_immutable")
      */
     private $created_at;
@@ -61,10 +56,16 @@ class Article
      */
     private $comments;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Approval::class, mappedBy="article_id")
+     */
+    private $approvals;
+
     public function __construct()
     {
         $this->created_at = new \DateTimeImmutable('now', new DateTimeZone('EUROPE/Paris'));
         $this->comments = new ArrayCollection();
+        $this->approvals = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -109,18 +110,6 @@ class Article
     public function setIsOnline(?bool $is_online): self
     {
         $this->is_online = $is_online;
-
-        return $this;
-    }
-
-    public function getApproved(): ?int
-    {
-        return $this->approved;
-    }
-
-    public function setApproved(?int $approved): self
-    {
-        $this->approved = $approved;
 
         return $this;
     }
@@ -173,6 +162,36 @@ class Article
             // set the owning side to null (unless already changed)
             if ($comment->getArticleId() === $this) {
                 $comment->setArticleId(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Approval>
+     */
+    public function getApprovals(): Collection
+    {
+        return $this->approvals;
+    }
+
+    public function addApproval(Approval $approval): self
+    {
+        if (!$this->approvals->contains($approval)) {
+            $this->approvals[] = $approval;
+            $approval->setArticleId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeApproval(Approval $approval): self
+    {
+        if ($this->approvals->removeElement($approval)) {
+            // set the owning side to null (unless already changed)
+            if ($approval->getArticleId() === $this) {
+                $approval->setArticleId(null);
             }
         }
 

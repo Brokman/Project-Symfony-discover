@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use App\Repository\CommentRepository;
 use DateTimeZone;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -41,18 +43,19 @@ class Comment
     private $commentary;
 
     /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    private $approval;
-
-    /**
      * @ORM\Column(type="datetime_immutable")
      */
     private $posted_at;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Approval::class, mappedBy="comment_id")
+     */
+    private $approvals;
+
     public function __construct()
     {
         $this->posted_at = new \DateTimeImmutable('now', new DateTimeZone('EUROPE/Paris'));
+        $this->approvals = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -96,18 +99,6 @@ class Comment
         return $this;
     }
 
-    public function getApproval(): ?int
-    {
-        return $this->approval;
-    }
-
-    public function setApproval(?int $approval): self
-    {
-        $this->approval = $approval;
-
-        return $this;
-    }
-
     public function getPostedAt(): ?\DateTimeImmutable
     {
         return $this->posted_at;
@@ -116,6 +107,36 @@ class Comment
     public function setPostedAt(\DateTimeImmutable $posted_at): self
     {
         $this->posted_at = $posted_at;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Approval>
+     */
+    public function getApprovals(): Collection
+    {
+        return $this->approvals;
+    }
+
+    public function addApproval(Approval $approval): self
+    {
+        if (!$this->approvals->contains($approval)) {
+            $this->approvals[] = $approval;
+            $approval->setCommentId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeApproval(Approval $approval): self
+    {
+        if ($this->approvals->removeElement($approval)) {
+            // set the owning side to null (unless already changed)
+            if ($approval->getCommentId() === $this) {
+                $approval->setCommentId(null);
+            }
+        }
 
         return $this;
     }

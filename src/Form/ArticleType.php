@@ -18,7 +18,6 @@ class ArticleType extends AbstractType
             ->add('is_online', null, [
                 'label' => 'Visible Online'
             ])
-            // ->add('approved')
             // ->add('created_at')
             // ->add('user_id')
         ;

@@ -53,10 +53,16 @@ class User implements UserInterface
      */
     private $comments;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Approval::class, mappedBy="user_id")
+     */
+    private $approvals;
+
     public function __construct()
     {
         $this->articles = new ArrayCollection();
         $this->comments = new ArrayCollection();
+        $this->approvals = new ArrayCollection();
     }
 
 
@@ -220,6 +226,36 @@ class User implements UserInterface
             // set the owning side to null (unless already changed)
             if ($comment->getUserId() === $this) {
                 $comment->setUserId(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Approval>
+     */
+    public function getApprovals(): Collection
+    {
+        return $this->approvals;
+    }
+
+    public function addApproval(Approval $approval): self
+    {
+        if (!$this->approvals->contains($approval)) {
+            $this->approvals[] = $approval;
+            $approval->setUserId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeApproval(Approval $approval): self
+    {
+        if ($this->approvals->removeElement($approval)) {
+            // set the owning side to null (unless already changed)
+            if ($approval->getUserId() === $this) {
+                $approval->setUserId(null);
             }
         }
 
