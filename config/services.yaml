@@ -36,3 +36,6 @@ services:
     #     tags: ['controller.service_arguments']
     App\Entity\User:
         autowire: true
+    
+    authentication_handler:
+        class: App\EventSubscriber\LogoutHandler
