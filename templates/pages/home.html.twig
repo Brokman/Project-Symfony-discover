@@ -44,6 +44,11 @@
             {% for article in articles %}
                 <div class="col-6 col-xxl-4">
                     <div class="card">
+                        {% if article.filename %}
+                            <img src="{{ vich_uploader_asset(article, 'pictureFile')}}" alt="card picture" class="card-img-top align-self-center" style="width: 100%; height: auto; pointer-events: none">
+                        {% else %}
+                            <img src="/media/articles/noimage.jpg" alt="card picture" class="card-img-top align-self-center" style="width: 100%; height: auto; pointer-events: none">
+                        {% endif %}
                         <div class="card-body">
                             <h5 class="card-title">
                                 <a href=" {{ path('article.show', {id: article.id, slug: article.slug}) }} ">{{ article.title }}</a>

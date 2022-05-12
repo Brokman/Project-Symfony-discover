@@ -10,9 +10,14 @@ use Symfony\Component\Validator\Constraints as Assert;
 use DateTimeZone;
 use Doctrine\ORM\Mapping as ORM;
 use Cocur\Slugify\Slugify;
+use DateTime;
+use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 /**
  * @ORM\Entity(repositoryClass=ArticleRepository::class)
+ * @Vich\Uploadable
  * @UniqueEntity("title")
  */
 class Article
@@ -34,6 +39,19 @@ class Article
      * @ORM\Column(type="text", nullable=true)
      */
     private $description;
+
+    /**
+     * @var string|null
+     * @ORM\Column(type="string", length=255)
+     */
+    private $filename;
+
+    /**
+     * @var File|null
+     * @Assert\Image(mimeTypes="image/jpeg")
+     * @Vich\UploadableField(mapping="article_picture", fileNameProperty="filename")
+     */
+    private $pictureFile;
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
@@ -65,6 +83,11 @@ class Article
      * @ORM\Column(type="integer", nullable=true)
      */
     private $approve_count;
+
+    /**
+     * @ORM\Column(type="datetime_immutable")
+     */
+    private $updated_at;
 
     public function __construct()
     {
@@ -103,6 +126,33 @@ class Article
     public function setDescription(?string $description): self
     {
         $this->description = $description;
+
+        return $this;
+    }
+    
+    public function getFilename(): ?string
+    {
+        return $this->filename;
+    }
+
+    public function setFilename(?string $filename): Article
+    {
+        $this->filename = $filename;
+
+        return $this;
+    }
+
+    public function getPictureFile(): ?File
+    {
+        return $this->pictureFile;
+    }
+
+    public function setPictureFile(?File $pictureFile): Article
+    {
+        $this->pictureFile = $pictureFile;
+        if ($this->pictureFile instanceof UploadedFile) {
+            $this->updated_at = new \DateTimeImmutable('now', new DateTimeZone('EUROPE/Paris'));
+        }
 
         return $this;
     }
@@ -211,6 +261,18 @@ class Article
     public function setApproveCount(?int $approve_count): self
     {
         $this->approve_count = $approve_count;
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeImmutable
+    {
+        return $this->updated_at;
+    }
+
+    public function setUpdatedAt(\DateTimeImmutable $updated_at): self
+    {
+        $this->updated_at = $updated_at;
 
         return $this;
     }
