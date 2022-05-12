@@ -156,7 +156,7 @@ class User implements UserInterface
         list (
             $this->id,
             $this->username,
-            $this->passwor
+            $this->password
         ) = unserialize($serialized, ['allow_classes' => false]);  
     }
 

@@ -1,0 +1,168 @@
+<?php
+namespace App\Controller;
+
+use App\Entity\Approval;
+use App\Entity\Article;
+use App\Form\ApprovalType;
+use App\Repository\ApprovalRepository;
+use App\Repository\ArticleRepository;
+use App\Repository\CommentRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
+
+
+class ApprovalController extends AbstractController
+{
+    /**
+     * @var EntityManagerInterface
+     */
+    private $em;
+    /**
+     * @var ApprovalRepository
+     */
+    private $repository;
+    /**
+     * @var ArticleRepository
+     */
+    private $articleRepository;
+    /**
+     * @var CommentRepository
+     */
+    private $commentRepository;
+
+    public function __construct(ApprovalRepository $repository, ArticleRepository $articleRepository, CommentRepository $commentRepository, EntityManagerInterface $em)
+    {
+        $this->em = $em;
+        $this->repository = $repository;
+        $this->articleRepository = $articleRepository;
+        $this->commentRepository = $commentRepository;
+
+    }
+
+
+    /**
+     * @Route("/articles/{slug}-{id}", name="approval", requirements={"slug": "[a-z0-9\-]*"}, methods="VOTE") 
+     * @var User $user
+     * @param Request $request
+     * @return Response
+     */
+    public function voteArticle(int $id, string $slug, Request $request) : Response
+    {
+        $user = $this->getUser();
+        $article = $this->articleRepository->find($id);
+
+        if(!empty($user) && (!empty($request->get('_pos')) || !empty($request->get('_min')) )) {
+            if ($this->isCsrfTokenValid('vote' . $id, $request->get('_token'))) {
+                $userVotes = $user->getApprovals();
+                foreach ($userVotes as $vote) {
+                    if($vote->getArticleId() === $article) {
+                        $approval = $vote;
+                    }
+                }
+
+                $count = $article->getApproveCount();
+                if(isset($approval)) {
+                    if(($request->get('_pos')) && ($approval->getIsPositive() === false)) {
+                        $count += 1;
+                        $approval->setIsPositive(true);
+                    } elseif(($request->get('_min')) && ($approval->getIsPositive() === true)) {
+                        $count -= 1;
+                        $approval->setIsPositive(false);
+                    } else {
+                        $this->addFlash('failed', "vote already have same value");
+                        return $this->redirectToRoute('article.show', [
+                            'id' => $article->getId(),
+                            'slug' => $article->getSlug()
+                        ], 301);
+                    }   
+                    $article->setApproveCount($count);
+                    $this->em->flush();
+                } else {
+                    $approval = new Approval;
+                    $approval->setUserId($user);
+                    $approval->setArticleId($article);
+                    $approval->setIsPositive($request->get('_pos'));
+                    if($request->get('_pos')) {
+                        $count += 1;
+                    } else {
+                        $count -= 1;
+                    }
+                    $article->setApproveCount($count);
+                    $this->em->persist($approval);
+                    $this->em->flush();
+                }
+                $this->addFlash('success', "Vote saved!");
+                return $this->redirectToRoute('article.show', [
+                    'id' => $article->getId(),
+                    'slug' => $article->getSlug()
+                ], 301);
+            } else {
+                $this->addFlash('failed', "Edition failed! Your CSRF token isn't valide");
+            }               
+        }
+
+        return $this->redirectToRoute('article.show', [
+            'id' => $article->getId(),
+            'slug' => $article->getSlug()
+        ], 301);
+    }
+
+    
+    
+        // /**
+    //  * @Route("/articles/approve/{id}", name="approval", requirements={"slug": "[a-z0-9\-]*"})
+    //  * @var User $user
+    //  * @var Comment $comment
+    //  * @param Request $request
+    //  * @param Article $article
+    //  * @return Response
+    //  */
+    // public function addApproval(Article $article, int $id, Request $request): Response
+    // {
+    //     $approval = new Approval;
+        
+    //     $subject = $article;
+    //     $approval->setArticleId($subject);
+        
+
+    //     $user = $this->getUser();
+    //     $approval->setUserId($user);
+
+    //     $subject->setApproveCount(-1); 
+    //     $approval->setIsPositive(false);
+        
+    //     $this->em->persist($approval);
+    //     $this->em->flush();
+    //     $this->addFlash('success', "Comment add");
+    //     return $this->redirectToRoute('article.show', [
+    //         'id' => $article->getId(),
+    //         'slug' => $article->getSlug()
+    //     ], 301);
+    // }
+
+    // /**
+    //  * @Route("/articles/{slug}-{id}", name="approval", requirements={"slug": "[a-z0-9\-]*"}, methods="VOTE") 
+    //  * @var User $user
+    //  * @param Request $request
+    //  * @return Response
+    //  */
+    // public function new(int $id, string $slug, Request $request) : Response
+    // {
+    //     $user = $this->getUser();
+    //     $article = $this->articleRepository->find($id);
+    //     $approval = new Approval;
+    //     $approval->setUserId($user);
+
+    //     $this->em->persist($approval);
+    //     $this->em->flush();
+    //     $this->addFlash('success', "Vote saved!");
+    //     return $this->redirectToRoute('article.show', [
+    //         'id' => $article->getId(),
+    //         'slug' => $article->getSlug()
+    //     ], 301);
+    // }
+
+}

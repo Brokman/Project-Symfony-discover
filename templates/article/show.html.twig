@@ -5,21 +5,25 @@
 {% block body %}
     <div class="container">
         <div class="text-center m-4">
-            {% for message in app.flashes('success') %}
-                <div class="alert alert-success">
-                    {{ message }}
-                </div>
-            {% endfor %}
-            {% for message in app.flashes('failed') %}
-                <div class="alert alert-danger">
-                    {{ message }}
-                </div>
-            {% endfor %}
+            {% if app.user %}
+                {% for message in app.flashes('success') %}
+                    <div class="alert alert-success">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+                {% for message in app.flashes('failed') %}
+                    <div class="alert alert-danger">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
 
             <h1> {{ article.title }} </h1>
             <p class="pt-4" style="font-size:1.2rem">{{ article.description | nl2br }}</p>
         </div>
         <div class="text-muted text-end" style="font-weight: 100; font-size:0.8rem">Created {{ article.createdat.format('Y-m-d') }} at {{ article.createdat.format('H:i') }} by {{ article.userid.username }} </div>
+
+        {% include 'article/approval.html.twig' with {'article': article} %}
 
         {% if article.comments is not empty %} <h4>Comments :</h4> {% endif %}
         {% for comment in article.comments %}

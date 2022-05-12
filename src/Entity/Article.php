@@ -61,6 +61,11 @@ class Article
      */
     private $approvals;
 
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $approve_count;
+
     public function __construct()
     {
         $this->created_at = new \DateTimeImmutable('now', new DateTimeZone('EUROPE/Paris'));
@@ -194,6 +199,18 @@ class Article
                 $approval->setArticleId(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getApproveCount(): ?int
+    {
+        return $this->approve_count;
+    }
+
+    public function setApproveCount(?int $approve_count): self
+    {
+        $this->approve_count = $approve_count;
 
         return $this;
     }

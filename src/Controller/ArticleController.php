@@ -6,7 +6,6 @@ use App\Entity\Article;
 use App\Entity\Comment;
 use App\Form\CommentType;
 use App\Repository\ArticleRepository;
-use App\Repository\CommentRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -26,16 +25,11 @@ class ArticleController extends AbstractController
      * @var ArticleRepository
      */
     private $repository;
-    /**
-     * @var CommentRepository
-     */
-    private $commentRepository;
 
-    public function __construct(ArticleRepository $repository, EntityManagerInterface $em, CommentRepository $commentRepository)
+    public function __construct(ArticleRepository $repository, EntityManagerInterface $em)
     {
         $this->repository = $repository;
         $this->em = $em;
-        $this->commentRepository = $commentRepository;
     }
 
     /**
