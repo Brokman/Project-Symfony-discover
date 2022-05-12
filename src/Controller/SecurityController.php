@@ -153,6 +153,14 @@ class SecurityController extends AbstractController
                     $this->em->flush();
                 }
             }
+            $userVotes = $user->getApprovals();
+            if(!empty($userVotes))
+            {
+                foreach ($userVotes as $vote) {
+                    $vote->setUserId($defaultuser);
+                    $this->em->flush();
+                }
+            }
 
 
             $this->em->remove($user);
